@@ -1,0 +1,28 @@
+[
+    {
+        "model": "levelupapi.game",
+        "pk": 1,
+        "fields": {
+            "user": 1,  
+            "name": "Stratego",
+            "gametype": 1,  
+            "description": "A strategy board game with a Napoleonic theme.",
+            "difficulty": 3,
+            "duration": 1.0,
+            "num_of_players": 2
+        }
+    },
+    {
+        "model": "levelupapi.game",
+        "pk": 2,
+        "fields": {
+            "user": 1,  
+            "name": "Monopoly",
+            "gametype": 1,  
+            "description": "A real estate trading game where players buy, sell, and trade properties to win.",
+            "difficulty": 2,
+            "duration": 2.0,
+            "num_of_players": 4
+        }
+    }
+]
