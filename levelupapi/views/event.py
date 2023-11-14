@@ -31,20 +31,27 @@ class EventView(ViewSet):
 
 
 class EventOrganizer(serializers.ModelSerializer):
-    full_name = serializers.SerializerMethodField()
-
-    def get_full_name(self, obj):
-        return f'{obj.first_name} {obj.last_name}'
 
     class Meta:
         model = User
-        fields = ['full_name']
+        fields = ['id', 'first_name', 'last_name']
 
 
 class EventSerializer(serializers.ModelSerializer):
 
     organizer = EventOrganizer(many=False)
+    attendees = EventOrganizer(many=False)
     game = GameSerializer(many=False)
+    date = serializers.SerializerMethodField()
+    time = serializers.SerializerMethodField()
+
+    def get_date(self, obj):
+        # Use the 'date' field from the Event model
+        return obj.date.strftime("%Y-%m-%d")
+
+    def get_time(self, obj):
+        # Use the 'time' field from the Event model
+        return obj.time.strftime("%I:%M %p")
 
     class Meta:
         model = Event
