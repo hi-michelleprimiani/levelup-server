@@ -1,0 +1,16 @@
+
+
+[
+    {
+        "model": "levelupapi.event",
+        "pk": 1,
+        "fields": {
+            "organizer": 1,  
+            "game": 1, 
+            "name": "Stratego Championship",
+            "location": "Board Game Cafe",
+            "date": "2023-12-01",  
+            "time": "18:00:00"  
+        }
+    }
+]
