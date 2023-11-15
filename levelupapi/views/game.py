@@ -18,6 +18,35 @@ class GameView(ViewSet):
         serializer = GameSerializer(game, many=True)
         return Response(serializer.data)
 
+    def create(self, request):
+        """Handle POST operations
+
+        Returns
+            Response -- JSON serialized game instance
+        """
+        game_type = GameType.objects.get(pk=request.data["gametype"])
+
+        game = Game()
+
+        game.user = request.auth.user
+        game.name = request.data.get('name')
+        game.gametype = game_type
+        game.description = request.data.get('description')
+        game.difficulty = request.data.get('difficulty')
+        game.duration = request.data.get('duration')
+        game.num_of_players = request.data.get('num_of_players')
+
+        game.save()
+
+        try:
+            serializer = GameSerializer(game, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except Exception:
+            return Response(None, status=status.HTTP_404_NOT_FOUND)
+
+        # Serialize the data and send it back to the client
+
 
 class GameUserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()

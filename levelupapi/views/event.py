@@ -2,7 +2,7 @@ from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from levelupapi.models import Event
+from levelupapi.models import Event, Game
 from django.contrib.auth.models import User
 from levelupapi.views.game import GameSerializer
 
@@ -29,6 +29,27 @@ class EventView(ViewSet):
         serializer = EventSerializer(events, many=True)
         return Response(serializer.data)
 
+    def create(self, request):
+
+        game = Game.objects.get(pk=request.data["game"])
+
+        events = Event()
+
+        events.organizer = request.auth.user
+        events.game = game
+        events.name = request.data.get('name')
+        events.location = request.data.get('location')
+        events.date = request.data.get('date')
+        events.time = request.data.get('time')
+        events.save()
+
+        try:
+            serializer = EventSerializer(events, many=False)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except Exception:
+            return Response(None, status=status.HTTP_404_NOT_FOUND)
+
 
 class EventOrganizer(serializers.ModelSerializer):
 
@@ -40,20 +61,31 @@ class EventOrganizer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
 
     organizer = EventOrganizer(many=False)
-    attendees = EventOrganizer(many=False)
+    attendees = EventOrganizer(many=True)
     game = GameSerializer(many=False)
-    date = serializers.SerializerMethodField()
     time = serializers.SerializerMethodField()
 
-    def get_date(self, obj):
-        # Use the 'date' field from the Event model
-        return obj.date.strftime("%Y-%m-%d")
-
-    def get_time(self, obj):
-        # Use the 'time' field from the Event model
-        return obj.time.strftime("%I:%M %p")
+    # def get_time(self, obj):
+    #     # Use the 'time' field from the Event model
+    #     return obj.time.strftime("%I:%M %p")
 
     class Meta:
         model = Event
-        fields = ['organizer', 'game', 'name',
+        fields = ['id', 'organizer', 'game', 'name',
                   'location', 'date', 'time', 'attendees']
+
+
+# class Developer:
+#     def __init__(self, name):
+#         self.name = name
+#         self.languages = ["Javascript", "React",
+#                           "Python", "Django", "Tailwind"]
+#         self.loves = [
+#             "exploring jazz music",
+#             "getting vertical on rocks",
+#             "devoting time to others"
+#         ]
+#         self.traits = ["laid-back", "compassionate", "silly-goose"]
+
+
+# paolo = Developer("Paolo Medel")
